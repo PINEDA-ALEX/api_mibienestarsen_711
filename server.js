@@ -3,6 +3,17 @@ const app = express();
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 
+// --- Importación de Sequelize y Sincronización de Base de Datos ---
+const sequelize = require('./models/index');
+
+sequelize.sync({ alter: true })
+    .then(() => {
+        console.log('¡Base de datos y tablas sincronizadas!');
+    })
+    .catch((err) => {
+        console.error('Error al sincronizar la base de datos:', err);
+    });
+
 // --- Middleware ---
 // Primero, procesa el cuerpo de las peticiones.
 app.use(bodyParser.urlencoded({extended:false}));
@@ -23,8 +34,8 @@ const eventsRoutes = require('./api/v1/routes/events.routes');
 
 app.use('/api/v1/users', usersRoutes);
 app.use('/api/v1/roles', rolesRoutes);
-app.use('/api/v1/categories', categoriesRoutes); // Agrega esta línea
-app.use('/api/v1/events', eventsRoutes);       // Agrega esta línea
+app.use('/api/v1/categories', categoriesRoutes);
+app.use('/api/v1/events', eventsRoutes);
 
 
 // --- Endpoints de prueba ---
