@@ -4,7 +4,8 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 
 // --- Importación de Sequelize y Sincronización de Base de Datos ---
-const sequelize = require('./models/index');
+// C:\Users\pined\Desktop\api_mibinestar_711\server.js
+const { sequelize } = require('./models/index');
 
 sequelize.sync({ alter: true })
     .then(() => {
