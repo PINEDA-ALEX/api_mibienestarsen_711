@@ -2,9 +2,9 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const cors = require('cors'); // 👈 Importar CORS
 
 // --- Importación de Sequelize y Sincronización de Base de Datos ---
-// C:\Users\pined\Desktop\api_mibinestar_711\server.js
 const { sequelize } = require('./models/index');
 
 sequelize.sync({ alter: true })
@@ -21,13 +21,19 @@ app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 app.use(morgan('dev'));
 
+// 👇 Habilitar CORS ANTES de las rutas
+app.use(cors({
+    origin: "*", // si quieres, aquí puedes poner la URL de tu Flutter Web en lugar de "*"
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
 // Si usas dotenv, asegúrate de que se cargue al principio
 if(process.env.NODE_ENV != 'production'){
     require('dotenv').config();
 }
 
 // --- Rutas ---
-// Después de procesar el cuerpo, usa las rutas.
 const usersRoutes = require('./api/v1/routes/users.routes');
 const rolesRoutes = require('./api/v1/routes/roles.routes');
 const categoriesRoutes = require('./api/v1/routes/categories.routes');
@@ -37,7 +43,6 @@ app.use('/api/v1/users', usersRoutes);
 app.use('/api/v1/roles', rolesRoutes);
 app.use('/api/v1/categories', categoriesRoutes);
 app.use('/api/v1/events', eventsRoutes);
-
 
 // --- Endpoints de prueba ---
 app.get('/', (req, res) => {
@@ -49,8 +54,8 @@ app.get('/test/:id', (req, res) => {
 });
 
 // --- Inicialización del servidor ---
-app.set ('port', process.env.PORT || 4000);
+app.set('port', process.env.PORT || 4000);
 
-app.listen(app.get('port'),()=>{
+app.listen(app.get('port'), () => {
     console.log(`Server on port ${app.get('port')}`);
 });
